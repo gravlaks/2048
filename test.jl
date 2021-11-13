@@ -18,7 +18,7 @@ mcts_struct = MonteCarloTreeSearch(
     Dict(),
     Dict(),
     3, 
-    50, 
+    500, 
     0.1, 
     U, 
 )
