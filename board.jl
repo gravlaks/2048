@@ -3,13 +3,15 @@ using Game2048: Dirs, bitboard_to_array, move
 
 function possible_moves(board)
     moves = []
+    boards = Dict()
     for dir in instances(Dirs)
         temp_board = move(board, dir)
         if temp_board != board
             push!(moves, dir)
+            boards[dir] = temp_board
         end
     end
-    return moves
+    return (moves, boards)
 end
 
 function get_linear_value(board)
@@ -26,4 +28,6 @@ function get_value(board)
     end
     return sum_all
 end
+
+
 

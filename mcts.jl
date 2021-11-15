@@ -1,5 +1,5 @@
 using Game2048: bitboard_to_array, Dirs
-
+using ProgressBars
 
 struct MDP_mcts
     γ
@@ -24,7 +24,9 @@ function (π::MonteCarloTreeSearch)(s)
     for k in 1:π.m
         simulate!(π, s)
     end
-    possible_actions = possible_moves(s)
+    possibles = possible_moves(s)
+    possible_actions = possibles[1]
+
     dir = argmax(
         Dict(a=>π.Q[(s,a)] for a in possible_actions)
     )
@@ -34,8 +36,8 @@ end
 bonus(Nsa, Ns) = Nsa == 0 ? Inf : sqrt(log(Ns)/Nsa)
 
 function explore(π::MonteCarloTreeSearch, s)
-    𝒜, N, Q, c = π.𝒫.𝒜, π.N, π.Q, π.c
-    possible_actions = possible_moves(s)
+    N, Q, c = π.N, π.Q, π.c
+    (possible_actions, _) = possible_moves(s)
 
     Ns = sum(N[(s,a)] for a in possible_actions)
     Ns = (Ns == 0) ? Inf : Ns
@@ -52,7 +54,8 @@ function simulate!(π::MonteCarloTreeSearch, s, d=π.d)
         return π.U(s)
     end
     𝒫, N, Q, c = π.𝒫, π.N, π.Q, π.c
-    𝒜, TR, γ = 𝒫.𝒜, 𝒫.TR, 𝒫.γ
+    TR, γ = 𝒫.TR, 𝒫.γ
+    (𝒜, _) = possible_moves(s)
     if !haskey(N, (s, first(𝒜)))
         for a in 𝒜
             N[(s,a)] = 0
